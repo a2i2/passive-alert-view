@@ -192,7 +192,7 @@ public extension PassiveAlertView {
         }
 
         public enum Background {
-            case blur(effect: UIBlurEffect, withProminence: Bool)
+            case blur(effect: UIBlurEffect, prominence: Bool = true)
             case solid(UIColor)
             case gradient(CAGradientLayer)
         }
