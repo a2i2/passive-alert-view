@@ -75,9 +75,9 @@ import UIKit
 
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalToSystemSpacingBelow: self.topAnchor, multiplier: 1.0),
-            self.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 2.0),
+            self.trailingAnchor.constraint(equalToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 2.0),
             self.bottomAnchor.constraint(equalToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 1.0),
-            stackView.leadingAnchor.constraint(lessThanOrEqualToSystemSpacingAfter: self.leadingAnchor, multiplier: 2.0),
+            stackView.leadingAnchor.constraint(equalToSystemSpacingAfter: self.leadingAnchor, multiplier: 2.0),
         ])
     }
 
@@ -99,8 +99,6 @@ import UIKit
         NSLayoutConstraint.activate([
             view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 26),
             self.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: self.trailingAnchor, multiplier: 1.0),
-            self.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1.0),
         ])
 
         setNeedsLayout()
