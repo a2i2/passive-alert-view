@@ -1,6 +1,6 @@
 import UIKit
 
-public protocol PassiveAlertViewDelegate: class {
+@objc public protocol PassiveAlertViewDelegate: class {
     func passiveAlertView(_ view: PassiveAlertView, willShowIn view: UIView)
     func passiveAlertView(_ view: PassiveAlertView, didShowIn view: UIView)
     func passiveAlertView(_ view: PassiveAlertView, willDismissFrom view: UIView)
@@ -8,7 +8,7 @@ public protocol PassiveAlertViewDelegate: class {
     func passiveAlertViewWasSelected(_ view: PassiveAlertView)
 }
 
-public class PassiveAlertView: UIView {
+@objc public class PassiveAlertView: UIView {
     private var currentlyAnimating = false
     private var dismissAfterFinishedAnimating = false
     private var dismissAnimatedAfterFinishedAnimating = false
@@ -85,7 +85,7 @@ public class PassiveAlertView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func show(in view: UIView, animated: Bool = true) {
+    @objc public func show(in view: UIView, animated: Bool = true) {
         if currentlyAnimating { return }
         if superview != nil { return print("Alert already visible, ignoring.") }
 
@@ -124,7 +124,7 @@ public class PassiveAlertView: UIView {
         }
     }
 
-    public func dismiss(after delay: TimeInterval = .zero, animated: Bool = true) {
+    @objc public func dismiss(after delay: TimeInterval = .zero, animated: Bool = true) {
         if currentlyAnimating {
             dismissAfterFinishedAnimating = true
             dismissAnimatedAfterFinishedAnimating = animated
@@ -229,12 +229,12 @@ public extension PassiveAlertView.Theme {
     )
 }
 
-private extension PassiveAlertView {
-    @objc func closeButtonPressed(_ sender: UIButton) {
+@objc private extension PassiveAlertView {
+    func closeButtonPressed(_ sender: UIButton) {
         dismiss(animated: true)
     }
 
-    @objc func alertTapped(_ sender: UITapGestureRecognizer) {
+    func alertTapped(_ sender: UITapGestureRecognizer) {
         delegate?.passiveAlertViewWasSelected(self)
     }
 }
