@@ -1,4 +1,4 @@
-# Passive Alert View
+# Passive Alert View ![Build](https://github.com/a2i2/passive-alert-view/workflows/Build/badge.svg?branch=master)
 
 ## Contributing
 
