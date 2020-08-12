@@ -1,12 +1,16 @@
 import UIKit
 
+// MARK: - PassiveAlertViewDelegate
+
 @objc public protocol PassiveAlertViewDelegate: class {
     func passiveAlertView(_ view: PassiveAlertView, willShowIn view: UIView)
     func passiveAlertView(_ view: PassiveAlertView, didShowIn view: UIView)
     func passiveAlertView(_ view: PassiveAlertView, willDismissFrom view: UIView)
     func passiveAlertView(_ view: PassiveAlertView, didDismissFrom view: UIView)
-    func passiveAlertViewWasSelected(_ view: PassiveAlertView)
+    func didSelectPassiveAlertView(_ view: PassiveAlertView)
 }
+
+// MARK: - PassiveAlertView
 
 @objc public class PassiveAlertView: UIView {
     private var currentlyAnimating = false
@@ -34,14 +38,7 @@ import UIKit
         return button
     }()
 
-    private lazy var separatorView: UIView = {
-        let view = UIView()
-        view.backgroundColor = theme.separatorColor
-        view.widthAnchor.constraint(equalToConstant: 2.0).isActive = true
-        return view
-    }()
-
-    public init(withContent content: String, theme: Theme = .default) {
+    public init(withContent: String, theme: Theme = .default) {
         self.theme = theme
 
         super.init(frame: .zero)
@@ -62,7 +59,7 @@ import UIKit
         stackView.spacing = UIStackView.spacingUseSystem
 
         if theme.showsCloseButton {
-            stackView.addArrangedSubview(separatorView)
+            stackView.addArrangedSubview(makeSeparatorView())
             stackView.addArrangedSubview(closeButton)
         }
 
@@ -74,10 +71,10 @@ import UIKit
         addGestureRecognizer(tapGesture)
 
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalToSystemSpacingBelow: self.topAnchor, multiplier: 1.0),
-            self.trailingAnchor.constraint(equalToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 2.0),
-            self.bottomAnchor.constraint(equalToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 1.0),
-            stackView.leadingAnchor.constraint(equalToSystemSpacingAfter: self.leadingAnchor, multiplier: 2.0),
+            stackView.topAnchor.constraint(equalToSystemSpacingBelow: topAnchor, multiplier: 1.0),
+            trailingAnchor.constraint(equalToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 2.0),
+            bottomAnchor.constraint(equalToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 1.0),
+            stackView.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 2.0),
         ])
     }
 
@@ -85,7 +82,16 @@ import UIKit
         fatalError("init(coder:) has not been implemented")
     }
 
-    @objc public func show(in view: UIView, animated: Bool = true) {
+    private func makeSeparatorView() -> UIView {
+        let view = UIView()
+        view.backgroundColor = theme.separatorColor
+        view.widthAnchor.constraint(equalToConstant: 2.0).isActive = true
+        return view
+    }
+}
+
+@objc public extension PassiveAlertView {
+    func show(in view: UIView, animated: Bool = true) {
         if currentlyAnimating { return }
         if superview != nil { return print("Alert already visible, ignoring.") }
 
@@ -97,8 +103,8 @@ import UIKit
 
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 26),
-            self.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 26),
+            centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
 
         setNeedsLayout()
@@ -122,7 +128,7 @@ import UIKit
         }
     }
 
-    @objc public func dismiss(after delay: TimeInterval = .zero, animated: Bool = true) {
+    func dismiss(after delay: TimeInterval = .zero, animated: Bool = true) {
         if currentlyAnimating {
             dismissAfterFinishedAnimating = true
             dismissAnimatedAfterFinishedAnimating = animated
@@ -158,6 +164,6 @@ import UIKit
     }
 
     func alertTapped(_ sender: UITapGestureRecognizer) {
-        delegate?.passiveAlertViewWasSelected(self)
+        delegate?.didSelectPassiveAlertView(self)
     }
 }
