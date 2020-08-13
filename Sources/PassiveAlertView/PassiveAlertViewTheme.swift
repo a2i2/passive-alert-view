@@ -42,11 +42,16 @@ public extension PassiveAlertView {
         }
 
         public enum Background {
+            /// Not yet implemented
             case blur(effect: UIBlurEffect, prominence: Bool = true)
+
             case solid(UIColor)
+
+            /// Not yet implemented
             case gradient(CAGradientLayer)
         }
 
+        /// Not yet implemented
         public enum Shadow {
             case none
             case with(color: UIColor, radius: CGFloat, opacity: Float = 0.5)
