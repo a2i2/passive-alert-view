@@ -41,11 +41,12 @@ public class PassiveAlertView: UIView {
     private var leadingImageView: UIImageView?
     private var trailingImageView: UIImageView?
 
-    private lazy var contentLabel: UILabel = {
-        let label = UILabel()
+    private lazy var contentLabel: InsetLabel = {
+        let label = InsetLabel()
         label.isUserInteractionEnabled = true
         label.textColor = theme.labelColor
         label.font = .preferredFont(forTextStyle: .body)
+        label.contentInsets = .init(top: 5, left: 12, bottom: 5, right: 12)
         return label
     }()
 
