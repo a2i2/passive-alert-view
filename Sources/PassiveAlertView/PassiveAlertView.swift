@@ -46,10 +46,7 @@ public class PassiveAlertView: UIView {
 
 private extension PassiveAlertView {
     func configureView() {
-        if case let .solid(color) = theme.background {
-            backgroundColor = color
-        }
-
+        theme.background.apply(to: self)
         theme.shadowStyle.apply(to: self)
 
         let stackView = configure(UIStackView(arrangedSubviews: [contentLabel])) {

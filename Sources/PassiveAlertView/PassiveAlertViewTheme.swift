@@ -49,9 +49,17 @@ public extension PassiveAlertView {
 
             /// Not yet implemented
             case gradient(CAGradientLayer)
+
+            func apply(to alertView: PassiveAlertView) {
+                switch self {
+                case let .solid(color):
+                    alertView.backgroundColor = color
+                case .blur, .gradient:
+                    fatalError("Not yet implemented")
+                }
+            }
         }
 
-        /// Not yet implemented
         public enum Shadow {
             case none
             case with(color: UIColor, radius: CGFloat, opacity: Float = 0.5)
