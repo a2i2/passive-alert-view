@@ -35,20 +35,12 @@ public class PassiveAlertView: UIView {
     public var animator: PassiveAlertViewAnimator?
 
     private let theme: Theme
-    private let leadingAccessory: Accessory?
-    private let trailingAccessory: Accessory?
+    public let leadingAccessory: Accessory?
+    public let contentLabel: UILabel!
+    public let trailingAccessory: Accessory?
 
     private var leadingImageView: UIImageView?
     private var trailingImageView: UIImageView?
-
-    private lazy var contentLabel: InsetLabel = {
-        let label = InsetLabel()
-        label.isUserInteractionEnabled = true
-        label.textColor = theme.labelColor
-        label.font = .preferredFont(forTextStyle: .body)
-        label.contentInsets = .init(top: 5, left: 12, bottom: 5, right: 12)
-        return label
-    }()
 
     public init(
         leadingAccessory: Accessory? = .none,
@@ -59,31 +51,48 @@ public class PassiveAlertView: UIView {
         self.theme = theme
         self.leadingAccessory = leadingAccessory
         self.trailingAccessory = trailingAccessory
+        contentLabel = configure(InsetLabel()) {
+            $0.isUserInteractionEnabled = true
+            $0.textColor = theme.labelColor
+            $0.text = content
+            $0.font = .preferredFont(forTextStyle: .body)
+            $0.contentInsets = .init(top: 5, left: 12, bottom: 5, right: 12)
+        }
 
         super.init(frame: .zero)
 
+        configureView()
+    }
+
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+private extension PassiveAlertView {
+    func configureView() {
         if case let .solid(color) = theme.background {
             backgroundColor = color
         }
 
-        self.theme.shadowStyle.apply(to: self)
+        theme.shadowStyle.apply(to: self)
 
-        contentLabel.text = content
-
-        let stackView = UIStackView(arrangedSubviews: [contentLabel])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-
+        let stackView = configure(UIStackView(arrangedSubviews: [contentLabel])) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.axis = .horizontal
+            $0.alignment = .fill
+            $0.distribution = .fill
+        }
         addSubview(stackView)
 
-        let alertTapGesture = UITapGestureRecognizer(target: self, action: #selector(alertTapped(_:)))
-        alertTapGesture.numberOfTouchesRequired = 1
-        alertTapGesture.numberOfTapsRequired = 1
+        let alertTapGesture = configure(UITapGestureRecognizer(target: self, action: #selector(alertTapped(_:)))) {
+            $0.numberOfTouchesRequired = 1
+            $0.numberOfTapsRequired = 1
+        }
         contentLabel.addGestureRecognizer(alertTapGesture)
 
-        if let accessory = leadingAccessory {
+        // Setup leading accessory
+        leadingImageView = leadingAccessory.map { accessory in
             let imageView = makeAccessoryImageView(accessory,
                                                    theme: theme,
                                                    action: #selector(leadingAccessoryTapped(_:)))
@@ -91,10 +100,11 @@ public class PassiveAlertView: UIView {
             if accessory.isSeparatorRequired {
                 stackView.insertArrangedSubview(makeSeparatorView(), at: 1)
             }
-            leadingImageView = imageView
+            return imageView
         }
 
-        if let accessory = trailingAccessory {
+        // Setup trailing accessory
+        trailingImageView = trailingAccessory.map { accessory in
             let imageView = makeAccessoryImageView(accessory,
                                                    theme: theme,
                                                    action: #selector(trailingAccessoryTapped(_:)))
@@ -102,7 +112,7 @@ public class PassiveAlertView: UIView {
                 stackView.addArrangedSubview(makeSeparatorView())
             }
             stackView.addArrangedSubview(imageView)
-            trailingImageView = imageView
+            return imageView
         }
 
         NSLayoutConstraint.activate([
@@ -113,38 +123,32 @@ public class PassiveAlertView: UIView {
         ])
     }
 
-    public required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-private extension PassiveAlertView {
     func makeAccessoryImageView(
         _ accessory: Accessory,
         theme: Theme,
         action: Selector
     ) -> UIImageView {
-        let tapGesture = UITapGestureRecognizer(target: self, action: action)
-        tapGesture.numberOfTouchesRequired = 1
-        tapGesture.numberOfTapsRequired = 1
+        return configure(UIImageView(image: accessory.image)) {
+            $0.isUserInteractionEnabled = accessory.isUserInteractionEnabled
+            $0.tintColor = theme.labelColor
+            $0.contentMode = .center
 
-        let imageView = UIImageView(image: accessory.image)
-        imageView.isUserInteractionEnabled = accessory.isUserInteractionEnabled
-        imageView.tintColor = theme.labelColor
-        imageView.contentMode = .center
-        imageView.addGestureRecognizer(tapGesture)
+            let tapGesture = configure(UITapGestureRecognizer(target: self, action: action)) {
+                $0.numberOfTouchesRequired = 1
+                $0.numberOfTapsRequired = 1
+            }
+            $0.addGestureRecognizer(tapGesture)
 
-        imageView.widthAnchor.constraint(greaterThanOrEqualToConstant: 32.0).isActive = true
-        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
-
-        return imageView
+            $0.widthAnchor.constraint(greaterThanOrEqualToConstant: 32.0).isActive = true
+            $0.widthAnchor.constraint(equalTo: $0.heightAnchor).isActive = true
+        }
     }
 
     func makeSeparatorView() -> UIView {
-        let view = UIView()
-        view.backgroundColor = theme.separatorColor
-        view.widthAnchor.constraint(equalToConstant: 1.0).isActive = true
-        return view
+        return configure(UIView()) {
+            $0.backgroundColor = theme.separatorColor
+            $0.widthAnchor.constraint(equalToConstant: 1.0).isActive = true
+        }
     }
 
     func dismissIfAccessoryRequires(_ accessory: Accessory?) {
