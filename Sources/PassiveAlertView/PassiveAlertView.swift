@@ -13,6 +13,7 @@ public class PassiveAlertView: UIView {
     public let leadingAccessory: Accessory?
     public let contentLabel: UILabel!
     public let trailingAccessory: Accessory?
+    public var shouldDismissOnSelect: Bool
 
     private var leadingImageView: UIImageView?
     private var trailingImageView: UIImageView?
@@ -26,11 +27,13 @@ public class PassiveAlertView: UIView {
         leadingAccessory: Accessory? = .none,
         message: String,
         trailingAccessory: Accessory? = .none,
+        shouldDismissOnSelect: Bool = false,
         theme: Theme = .default
     ) {
         self.theme = theme
         self.leadingAccessory = leadingAccessory
         self.trailingAccessory = trailingAccessory
+        self.shouldDismissOnSelect = shouldDismissOnSelect
         contentLabel = configure(InsetLabel()) {
             $0.isUserInteractionEnabled = true
             $0.textColor = theme.labelColor
@@ -211,6 +214,10 @@ public extension PassiveAlertView {
 @objc private extension PassiveAlertView {
     func alertTapped(_ sender: UITapGestureRecognizer) {
         delegate?.didSelectPassiveAlertView(self)
+
+        if shouldDismissOnSelect {
+            dismiss(animated: true)
+        }
     }
 
     func leadingAccessoryTapped(_ sender: UITapGestureRecognizer) {
