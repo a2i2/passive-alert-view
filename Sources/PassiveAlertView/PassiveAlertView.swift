@@ -17,6 +17,11 @@ public class PassiveAlertView: UIView {
     private var leadingImageView: UIImageView?
     private var trailingImageView: UIImageView?
 
+    public var message: String? {
+        get { contentLabel.text }
+        set { contentLabel.text = newValue }
+    }
+
     public init(
         leadingAccessory: Accessory? = .none,
         message: String,
@@ -30,8 +35,12 @@ public class PassiveAlertView: UIView {
             $0.isUserInteractionEnabled = true
             $0.textColor = theme.labelColor
             $0.text = message
+            $0.adjustsFontForContentSizeCategory = true
             $0.font = .preferredFont(forTextStyle: .body)
-            $0.contentInsets = .init(top: 5, left: 12, bottom: 5, right: 12)
+            // less padding is needed when there is a separator
+            let leadingInset: CGFloat = (leadingAccessory?.isSeparatorRequired ?? true) ? 12 : 4
+            let trailingInset: CGFloat = (trailingAccessory?.isSeparatorRequired ?? true) ? 12 : 4
+            $0.contentInsets = .init(top: 5, left: leadingInset, bottom: 5, right: trailingInset)
         }
 
         super.init(frame: .zero)
@@ -142,8 +151,10 @@ public extension PassiveAlertView {
 
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 26),
+            bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -26),
             centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            leadingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
         ])
 
         setNeedsLayout()
