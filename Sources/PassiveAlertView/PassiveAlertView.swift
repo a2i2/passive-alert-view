@@ -44,7 +44,7 @@ public class PassiveAlertView: UIView {
 
     public init(
         leadingAccessory: Accessory? = .none,
-        content: String,
+        message: String,
         trailingAccessory: Accessory? = .none,
         theme: Theme = .default
     ) {
@@ -54,7 +54,7 @@ public class PassiveAlertView: UIView {
         contentLabel = configure(InsetLabel()) {
             $0.isUserInteractionEnabled = true
             $0.textColor = theme.labelColor
-            $0.text = content
+            $0.text = message
             $0.font = .preferredFont(forTextStyle: .body)
             $0.contentInsets = .init(top: 5, left: 12, bottom: 5, right: 12)
         }
