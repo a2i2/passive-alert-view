@@ -35,7 +35,6 @@ public class PassiveAlertView: UIView {
         self.trailingAccessory = trailingAccessory
         self.shouldDismissOnSelect = shouldDismissOnSelect
         contentLabel = configure(InsetLabel()) {
-            $0.isUserInteractionEnabled = true
             $0.textColor = theme.labelColor
             $0.text = message
             $0.adjustsFontForContentSizeCategory = true
@@ -73,7 +72,8 @@ private extension PassiveAlertView {
             $0.numberOfTouchesRequired = 1
             $0.numberOfTapsRequired = 1
         }
-        contentLabel.addGestureRecognizer(alertTapGesture)
+        isUserInteractionEnabled = true
+        self.addGestureRecognizer(alertTapGesture)
 
         // Setup leading accessory
         leadingImageView = leadingAccessory.map { accessory in
