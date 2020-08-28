@@ -6,8 +6,8 @@ public extension PassiveAlertView {
 
         public let image: UIImage?
         public let isSeparatorRequired: Bool
-        public let isUserInteractionEnabled: Bool
-        public let shouldDismissOnSelect: Bool
+        public var isUserInteractionEnabled: Bool
+        public var shouldDismissOnSelect: Bool
 
         public init(
             named name: String,
